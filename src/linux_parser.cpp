@@ -196,14 +196,11 @@ long LinuxParser::IdleJiffies()
   }
 }
 
-// TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() 
-{ 
-  // vector<string> cpu_utilization;
-  // LinuxParser::ActiveJiffies() / LinuxParser::Jiffies();
-  // return cpu_utilization;
-  return {};
-}
+// // TODO: Read and return CPU utilization
+// vector<string> LinuxParser::CpuUtilization() 
+// { 
+//   return {};
+// }
 
 // Read and return the total number of processes
 int LinuxParser::TotalProcesses() 
