@@ -71,8 +71,9 @@ long int System::UpTime()
     return LinuxParser::UpTime(); 
 }
 
+// Reorder processes with descending order regarding cpu utilization
 void System::ReorderProcesses()
 {
-    //std::sort(processes_.begin(), processes_.end());
+    std::sort(processes_.rbegin(), processes_.rend());
     return;
 }
