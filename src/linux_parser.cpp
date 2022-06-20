@@ -152,36 +152,58 @@ long LinuxParser::UpTime()
   }
 }
 
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() 
+// Read and return the number of active jiffies for the system
+// active_jiffies = user + nice + system + irq + softirq + steal
+long LinuxParser::ActiveJiffies() 
 { 
+  long user = 0, nice = 0, system = 0, idle = 0;
+  long iowait = 0, irq = 0, softirq = 0, steal = 0;
+  long guest = 0, guestnice = 0;
+  
   string line;
-  long jiffies = 0;
   string dummy_str;
   string filename = kProcDirectory + kStatFilename;
   std::ifstream stream(filename);
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
-    linestream >> dummy_str >> jiffies;
-    return jiffies;
+    linestream >> dummy_str >> user >> nice >> system >> idle >> iowait >> irq >> softirq >> steal >> guest >> guestnice;
+    return user + nice + system + irq + softirq + steal;
   } else {
     throw std::runtime_error("Cannot access file : " + filename);
   }
 }
 
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
-
-// TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
-
-// TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
+// Read and return the number of idle jiffies for the system
+// idle_jiffies = idle + iowait
+long LinuxParser::IdleJiffies() 
+{ 
+  long user = 0, nice = 0, system = 0, idle = 0;
+  long iowait = 0, irq = 0, softirq = 0, steal = 0;
+  long guest = 0, guestnice = 0;
+  
+  string line;
+  string dummy_str;
+  string filename = kProcDirectory + kStatFilename;
+  std::ifstream stream(filename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> dummy_str >> user >> nice >> system >> idle >> iowait >> irq >> softirq >> steal >> guest >> guestnice;
+    return idle + iowait;
+  } else {
+    throw std::runtime_error("Cannot access file : " + filename);
+  }
+}
 
 // TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
+vector<string> LinuxParser::CpuUtilization() 
+{ 
+  // vector<string> cpu_utilization;
+  // LinuxParser::ActiveJiffies() / LinuxParser::Jiffies();
+  // return cpu_utilization;
+  return {};
+}
 
 // Read and return the total number of processes
 int LinuxParser::TotalProcesses() 
@@ -193,6 +215,54 @@ int LinuxParser::TotalProcesses()
 int LinuxParser::RunningProcesses() 
 { 
   return std::stoi(get_val(kProcDirectory + kStatFilename, "procs_running"));
+}
+
+// Read and return the number of jiffies for the system
+// Used to calculate Cpu utilization of each process
+// Read /proc/stat
+// total_jiffies = user + system
+long LinuxParser::Jiffies() 
+{ 
+  long user = 0, nice = 0, system = 0, idle = 0;
+  long iowait = 0, irq = 0, softirq = 0, steal = 0;
+  long guest = 0, guestnice = 0;
+  
+  string line;
+  string dummy_str;
+  string filename = kProcDirectory + kStatFilename;
+  std::ifstream stream(filename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> dummy_str >> user >> nice >> system >> idle >> iowait >> irq >> softirq >> steal >> guest >> guestnice;
+    return user + system;
+  } else {
+    throw std::runtime_error("Cannot access file : " + filename);
+  }
+}
+
+// Read and return the number of active jiffies for a PID
+// Used to calculate Cpu utilization of each process
+// Read /proc/[PID]/stat
+// active_jiffies = user(14) + system(15) + user waited for children(16) + system waited for children(17)
+long LinuxParser::ActiveJiffies(int pid) 
+{ 
+  string line, dummy_str;
+  long user = 0, system = 0, user_waited_for_children = 0, system_waited_for_children = 0;
+  string filename = kProcDirectory + std::to_string(pid) + kStatFilename;
+  std::ifstream stream(filename);
+  if (stream.is_open()) { 
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    // skip first 13 fields
+    for (int i = 0; i < 13; i++) {
+       linestream >> dummy_str;
+    }
+    linestream >> user >> system >> user_waited_for_children >> system_waited_for_children;
+    return user + system + user_waited_for_children + system_waited_for_children;
+  } else {
+    throw std::runtime_error("Cannot access file : " + filename);
+  }
 }
 
 // Read and return the command associated with a process
@@ -211,7 +281,6 @@ string LinuxParser::Command(int pid)
 }
 
 // Read and return the memory used by a process (in units of MB)
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Ram(int pid) 
 { 
   string filename = kProcDirectory + std::to_string(pid) + kStatusFilename;
@@ -221,7 +290,6 @@ string LinuxParser::Ram(int pid)
 }
 
 // Read and return the user ID associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Uid(int pid) 
 { 
   string filename = kProcDirectory + std::to_string(pid) + kStatusFilename;
@@ -229,7 +297,6 @@ string LinuxParser::Uid(int pid)
 }
 
 // Read and return the user associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::User(int pid) 
 { 
   string line;
@@ -252,7 +319,6 @@ string LinuxParser::User(int pid)
 }
 
 // Read and return the uptime of a process
-// REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::UpTime(int pid) 
 {
   string filename = kProcDirectory + std::to_string(pid) + kStatFilename;

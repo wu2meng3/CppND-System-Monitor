@@ -21,7 +21,7 @@ You need to properly format the uptime. Refer to the comments mentioned in forma
 // TODO: Return the system's CPU
 Processor& System::Cpu() 
 { 
-    return cpu_; 
+    return cpu_;
 }
 
 // TODO: Return a container composed of the system's processes
