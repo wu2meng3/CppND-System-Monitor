@@ -27,15 +27,15 @@ float Process::CpuUtilization()
 {
     long process_jiffies_so_far =  LinuxParser::ActiveJiffies(this->pid_);
     long total_jiffies_so_far = LinuxParser::Jiffies();
-    long process_jiffies_now = process_jiffies_so_far - prev_process_jiffies_so_far;
-    long total_jiffies_now = total_jiffies_so_far - prev_total_jiffies_so_far;
+    long process_jiffies_now = process_jiffies_so_far - prev_process_jiffies_so_far_;
+    long total_jiffies_now = total_jiffies_so_far - prev_total_jiffies_so_far_;
     if (total_jiffies_now <= 0) throw std::runtime_error("invalid total jiffies to calculate process's CPU utilization.");
 
-    prev_process_jiffies_so_far = process_jiffies_so_far;
-    prev_total_jiffies_so_far = total_jiffies_so_far;
-    cpu_utilization = (float) process_jiffies_now / (float) total_jiffies_now;
+    prev_process_jiffies_so_far_ = process_jiffies_so_far;
+    prev_total_jiffies_so_far_ = total_jiffies_so_far;
+    cpu_utilization_ = (float) process_jiffies_now / (float) total_jiffies_now;
 
-    return cpu_utilization;
+    return cpu_utilization_;
 }
 
 // Return the command that generated this process
@@ -62,10 +62,10 @@ long int Process::UpTime()
     return LinuxParser::UpTime(this->pid_);
 }
 
-float Process::GetCpuUtilization() const {return cpu_utilization;}
+float Process::GetCpuUtilization() const {return cpu_utilization_;}
 
 // Overload the "less than" comparison operator for Process objects
-bool Process::operator<(Process const& a) const 
+bool Process::operator < (Process const& a) const 
 {
-    return this->GetCpuUtilization() < a.GetCpuUtilization();
+    return cpu_utilization_ < a.GetCpuUtilization();
 }

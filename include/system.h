@@ -17,6 +17,7 @@ class System {
   int RunningProcesses();
   std::string Kernel();
   std::string OperatingSystem();
+  void ReorderProcesses(); // Reorder processes according to cpu_utilization;
 
   // TODO: Define any necessary private members
  private:

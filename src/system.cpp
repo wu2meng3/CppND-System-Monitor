@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 #include "process.h"
 #include "processor.h"
@@ -68,4 +69,10 @@ int System::TotalProcesses()
 long int System::UpTime() 
 { 
     return LinuxParser::UpTime(); 
+}
+
+void System::ReorderProcesses()
+{
+    //std::sort(processes_.begin(), processes_.end());
+    return;
 }
