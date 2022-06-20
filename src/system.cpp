@@ -30,7 +30,7 @@ vector<Process>& System::Processes()
     auto pids = LinuxParser::Pids();
     for (const auto& pid : pids) {
         //processes_.emplace_back(pid, LinuxParser::User(pid), LinuxParser::Command(pid), LinuxParser::Ram(pid), LinuxParser::UpTime());
-        processes_.emplace_back(pid, LinuxParser::User(pid), LinuxParser::Command(pid));
+        processes_.emplace_back(pid, LinuxParser::User(pid), LinuxParser::Command(pid), LinuxParser::UpTime(pid));
     }
     return processes_;
 }

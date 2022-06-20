@@ -11,8 +11,8 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-Process::Process(int pid_in, const string& user_in, const string& cmd_in)
-: pid_(pid_in), user_(user_in), cmd_(cmd_in)
+Process::Process(int pid_in, const string& user_in, const string& cmd_in, long up_time_in)
+: pid_(pid_in), user_(user_in), cmd_(cmd_in), up_time_(up_time_in)
 {
 }
 
@@ -22,7 +22,7 @@ Process::Process(int pid_in, const string& user_in, const string& cmd_in)
 // }
 
 // TODO: Return this process's ID
-int Process::Pid()
+int Process::Pid() const
 { 
     return pid_;
 }
@@ -51,14 +51,13 @@ string Process::User()
 // TODO: Return the age of this process (in seconds)
 long int Process::UpTime()
 { 
-    //return up_time_;
-    return 0;
+    return up_time_;
 }
 
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a[[maybe_unused]]) const 
 { 
-    //return this->CpuUtilization() < a.CpuUtilization();
-    return true;
+    return this->Pid() < a.Pid();
+    //return true;
 }
