@@ -10,8 +10,8 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-Process::Process(int pid_in)
-: pid_(pid_in)
+Process::Process(int pid_in, const string& user_in)
+: pid_(pid_in), user_(user_in)
 {
 }
 
@@ -46,8 +46,7 @@ string Process::Ram()
 // TODO: Return the user (name) that generated this process
 string Process::User()
 { 
-    //return user_; 
-    return "mwu";
+    return user_;
 }
 
 // TODO: Return the age of this process (in seconds)
