@@ -52,7 +52,7 @@ string Process::Ram()
 
 // Return the user (name) that generated this process
 string Process::User() const
-{ 
+{
     return user_;
 }
 
@@ -62,9 +62,10 @@ long int Process::UpTime()
     return LinuxParser::UpTime(this->pid_);
 }
 
+float Process::GetCpuUtilization() const {return cpu_utilization;}
+
 // Overload the "less than" comparison operator for Process objects
 bool Process::operator<(Process const& a) const 
 {
-    //return this->cpu_utilization < a.cpu_utilization;
-    return true;
+    return this->GetCpuUtilization() < a.GetCpuUtilization();
 }
