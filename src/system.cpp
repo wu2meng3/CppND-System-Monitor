@@ -43,7 +43,7 @@ std::string System::Kernel()
 
 // Return the system's memory utilization
 float System::MemoryUtilization() 
-{ 
+{
     return LinuxParser::MemoryUtilization();
 }
 

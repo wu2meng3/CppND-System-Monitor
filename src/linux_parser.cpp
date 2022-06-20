@@ -6,6 +6,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <tuple>
+#include <experimental/filesystem>
 
 #include "linux_parser.h"
 
@@ -13,6 +14,8 @@ using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
+
+namespace fs = std::experimental::filesystem;
 
 // Given a key, get the corresponding value
 string get_val(const string& filename, const string& key_str_target) {
@@ -106,23 +109,18 @@ string LinuxParser::Kernel() {
   }
 }
 
-// BONUS: Update this to use std::filesystem
+// Use std::filesystem to iterate directories
 vector<int> LinuxParser::Pids() {
   vector<int> pids;
-  DIR* directory = opendir(kProcDirectory.c_str());
-  struct dirent* file;
-  while ((file = readdir(directory)) != nullptr) {
-    // Is this a directory?
-    if (file->d_type == DT_DIR) {
-      // Is every character of the name a digit?
-      string filename(file->d_name);
-      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
-        int pid = stoi(filename);
+  const fs::path proc{kProcDirectory};
+  for (auto const& dir_entry : fs::directory_iterator{proc}) {
+    auto dir_name = dir_entry.path().filename().string();
+    if (std::all_of(dir_name.begin(), dir_name.end(), isdigit)) {
+        int pid = stoi(dir_name);
         pids.push_back(pid);
-      }
     }
   }
-  closedir(directory);
+
   return pids;
 }
 

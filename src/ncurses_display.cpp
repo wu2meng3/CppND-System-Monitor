@@ -83,6 +83,11 @@ void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
               Format::ElapsedTime(processes[i].UpTime()).c_str());
     mvwprintw(window, row, command_column,
               processes[i].Command().substr(0, window->_maxx - 46).c_str());
+    
+    if (processes[0].Pid() == processes[1].Pid()) {
+      std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::endl;
+      throw std::runtime_error("processes[0].Pid() = processes[1].Pid() = " + processes[1].Pid());
+    }
   }
 }
 
