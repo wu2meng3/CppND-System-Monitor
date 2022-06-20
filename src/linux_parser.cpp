@@ -290,29 +290,33 @@ string LinuxParser::Ram(int pid)
 string LinuxParser::Uid(int pid) 
 { 
   string filename = kProcDirectory + std::to_string(pid) + kStatusFilename;
-  return get_val(filename, "uid:");
+  return get_val(filename, "Uid:");
 }
 
 // Read and return the user associated with a process
 string LinuxParser::User(int pid) 
 { 
   string line;
-  string user, dummy_str, pid_str;
-  std::ifstream filestream(kPasswordPath);
+  string username, dummy_str, uid_str;
+  string uid_str_target = LinuxParser::Uid(pid);
+  string filename = kPasswordPath;
+  std::ifstream filestream(filename);
   if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
       std::replace(line.begin(), line.end(), ' ', '_');
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
-      while (linestream >> user >> dummy_str >> pid_str) {
-        if (pid_str == std::to_string(pid)) {
-          std::replace(user.begin(), user.end(), '_', ' ');
-          return user;
+      while (linestream >> username >> dummy_str >> uid_str) {
+        if (uid_str == uid_str_target) {
+          std::replace(username.begin(), username.end(), '_', ' ');
+          return username;
         }
       }
     }
+  } else {
+    throw std::runtime_error("Cannot access file : " + filename);
   }
-  return user;
+  return username;
 }
 
 // Read and return the uptime of a process
