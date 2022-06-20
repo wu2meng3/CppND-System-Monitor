@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <unistd.h>
+#include <tuple>
 
 #include "linux_parser.h"
 
@@ -13,6 +14,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+// Given a key, get the corresponding value
 string get_val(const string& filename, const string& key_str_target) {
   string line, key_str, val_str;
   std::ifstream stream(filename);
@@ -27,6 +29,22 @@ string get_val(const string& filename, const string& key_str_target) {
   } else {
     // cannot find key_str
     throw std::runtime_error("Cannot access file : " + filename);
+  }
+  return {};
+}
+
+// Given a key, get the corresponding value as well as unit as a string
+std::tuple<string, string> get_val_with_unit(const string& filename, const string& key_str_target) {
+  string line, key_str, val_str, unit_str;
+  std::ifstream stream(filename);
+  if (stream.is_open()) {
+    while (std::getline(stream, line)) {    
+      std::istringstream linestream(line);
+      linestream >> key_str >> val_str >> unit_str;
+      
+      if (key_str == key_str_target) return std::make_tuple(val_str, unit_str);
+    }
+    throw std::runtime_error("Cannot find key_str : " + key_str + " in file : " + filename);
   }
   return {};
 }
@@ -192,12 +210,14 @@ string LinuxParser::Command(int pid)
   }
 }
 
-// Read and return the memory used by a process
+// Read and return the memory used by a process (in units of MB)
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Ram(int pid) 
 { 
   string filename = kProcDirectory + std::to_string(pid) + kStatusFilename;
-  long up_time = std::stol(get_val(filename, "VmSize:"));
+  auto [val_str, unit_str] = get_val_with_unit(filename, "VmSize:");
+  if (unit_str != "kB") throw std::runtime_error("wrong unit : " + unit_str);
+  return std::to_string(std::stoi(val_str) / 1024);
 }
 
 // Read and return the user ID associated with a process
