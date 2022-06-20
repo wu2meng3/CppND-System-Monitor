@@ -11,8 +11,8 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-Process::Process(int pid_in, const string& user_in, const string& cmd_in, long up_time_in)
-: pid_(pid_in), user_(user_in), cmd_(cmd_in), up_time_(up_time_in)
+Process::Process(int pid_in, const string& user_in, const string& cmd_in)
+: pid_(pid_in), user_(user_in), cmd_(cmd_in)
 {
 }
 
@@ -23,9 +23,19 @@ int Process::Pid() const
 }
 
 // Return this process's CPU utilization
-float Process::CpuUtilization() const
+float Process::CpuUtilization()
 {
-    return (float) LinuxParser::ActiveJiffies(this->pid_) / (float) LinuxParser::Jiffies();
+    long process_jiffies_so_far =  LinuxParser::ActiveJiffies(this->pid_);
+    long total_jiffies_so_far = LinuxParser::Jiffies();
+    long process_jiffies_now = process_jiffies_so_far - prev_process_jiffies_so_far;
+    long total_jiffies_now = total_jiffies_so_far - prev_total_jiffies_so_far;
+    if (total_jiffies_now <= 0) throw std::runtime_error("invalid total jiffies to calculate process's CPU utilization.");
+
+    prev_process_jiffies_so_far = process_jiffies_so_far;
+    prev_total_jiffies_so_far = total_jiffies_so_far;
+    cpu_utilization = (float) process_jiffies_now / (float) total_jiffies_now;
+
+    return cpu_utilization;
 }
 
 // Return the command that generated this process
@@ -47,14 +57,14 @@ string Process::User() const
 }
 
 // Return the age of this process (in seconds)
-long int Process::UpTime() const
+long int Process::UpTime()
 { 
-    return up_time_;
+    return LinuxParser::UpTime(this->pid_);
 }
 
 // Overload the "less than" comparison operator for Process objects
-// REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const 
-{ 
-    return this->CpuUtilization() < a.CpuUtilization();
+bool Process::operator<(Process const& a) const 
+{
+    //return this->cpu_utilization < a.cpu_utilization;
+    return true;
 }

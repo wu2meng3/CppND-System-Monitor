@@ -316,9 +316,11 @@ string LinuxParser::User(int pid)
 }
 
 // Read and return the uptime of a process
+// up_time_process = up_time_system - start_time_process
 long LinuxParser::UpTime(int pid) 
 {
   string filename = kProcDirectory + std::to_string(pid) + kStatFilename;
-  long up_time = std::stol(get_field(filename, 22));
-  return up_time / sysconf(_SC_CLK_TCK);
+  // 22 --> starttime: the time the process started after system boot
+  long start_time = std::stol(get_field(filename, 22));
+  return LinuxParser::UpTime() - start_time / sysconf(_SC_CLK_TCK);
 }
