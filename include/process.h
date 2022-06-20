@@ -18,10 +18,9 @@ class Process {
   bool operator<(Process const& a) const;
 
  private:
-   int pid_ = 0;
-   std::string user_;
-   std::string cmd_;
-   long up_time_;
+   const int pid_ = 0;
+   const std::string user_;
+   const std::string cmd_;
 
    long prev_process_jiffies_so_far = 0;
    long prev_total_jiffies_so_far = 0;
