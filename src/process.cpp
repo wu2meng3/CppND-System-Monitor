@@ -6,13 +6,14 @@
 
 #include "process.h"
 #include "linux_parser.h"
+#include "unistd.h"
 
 using std::string;
 using std::to_string;
 using std::vector;
 
 Process::Process(int pid_in)
-: pid_(pid_in), up_time_(LinuxParser::UpTime(pid_in)), user_(LinuxParser::User(pid_in)), cmd_(LinuxParser::Command(pid_in)), ram_(LinuxParser::Ram(pid_in))
+: pid_(pid_in), user_(LinuxParser::User(pid_in)), cmd_(LinuxParser::Command(pid_in)), ram_(LinuxParser::Ram(pid_in))
 {
 }
 
@@ -24,17 +25,23 @@ int Process::Pid() const
 }
 
 // Return this process's CPU utilization
+// according to https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat/16736599#16736599
+// cpu_utilization_ = (utime + stime + cutime + cstime) / (uptime_system - start_time)
+//                  = (utime + stime + cutime + cstime) / (up_time_)
+// up_time_ = uptime_system - start_time is the uptime for this process 
+// Set cpu_utilization_ and up_time_
 void Process::ResetCpuUtilization()
 {
-    long process_jiffies_so_far =  LinuxParser::ActiveJiffies(this->pid_);
-    long total_jiffies_so_far = LinuxParser::Jiffies();
-    long process_jiffies_now = process_jiffies_so_far - prev_process_jiffies_so_far_;
-    long total_jiffies_now = total_jiffies_so_far - prev_total_jiffies_so_far_;
-    if (total_jiffies_now <= 0) throw std::runtime_error("invalid total jiffies to calculate process's CPU utilization.");
-
+    long process_jiffies_so_far =  LinuxParser::ActiveJiffies(this->pid_);    
+    long process_active_jiffies = process_jiffies_so_far - prev_process_jiffies_so_far_;
+    float process_active_time = (float) process_active_jiffies / sysconf(_SC_CLK_TCK);
+    float up_time_so_far = LinuxParser::UpTime(pid_);
+    float wall_time = up_time_so_far - up_time_;
+    
+    up_time_ = up_time_so_far;
     prev_process_jiffies_so_far_ = process_jiffies_so_far;
-    prev_total_jiffies_so_far_ = total_jiffies_so_far;
-    cpu_utilization_ = (float) process_jiffies_now / (float) total_jiffies_now;
+ 
+    cpu_utilization_ = (float) process_active_time / (float) wall_time;
 }
 
 // Return the command that generated this process
