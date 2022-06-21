@@ -12,7 +12,7 @@ using std::to_string;
 using std::vector;
 
 Process::Process(int pid_in)
-: pid_(pid_in), user_(LinuxParser::User(pid_in)), cmd_(LinuxParser::Command(pid_in)), ram_(LinuxParser::Ram(pid_in))
+: pid_(pid_in), up_time_(LinuxParser::UpTime(pid_in)), user_(LinuxParser::User(pid_in)), cmd_(LinuxParser::Command(pid_in)), ram_(LinuxParser::Ram(pid_in))
 {
 }
 
@@ -44,7 +44,7 @@ string Process::Command() const
 }
 
 // Return this process's memory utilization
-string Process::Ram()
+string Process::Ram() const
 { 
     return ram_;
 }
@@ -56,12 +56,12 @@ string Process::User() const
 }
 
 // Return the age of this process (in seconds)
-long int Process::UpTime()
+long Process::UpTime() const
 { 
-    return LinuxParser::UpTime(this->pid_);
+    return up_time_;
 }
 
-float Process::CpuUtilization() const 
+float Process::CpuUtilization() const
 {
     return cpu_utilization_;
 }
@@ -69,8 +69,7 @@ float Process::CpuUtilization() const
 // Overload the "less than" comparison operator for Process objects
 bool Process::operator < (Process const& a) const 
 {
-    // return cpu_utilization_ < a.GetCpuUtilization();
-    return pid_ < a.Pid();
+    return cpu_utilization_ < a.CpuUtilization();
 }
 
 bool Process::operator == (Process const& a) const

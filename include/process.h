@@ -12,18 +12,20 @@ class Process {
   ~Process() = default;
 
   int Pid() const;
+  float CpuUtilization() const;
   std::string User() const;
   std::string Command() const;
-  void ResetCpuUtilization();
-  float CpuUtilization() const;
-  std::string Ram();
-  long int UpTime();
+  std::string Ram() const;
+  long UpTime() const;
   bool operator < (Process const& a) const;
   bool operator == (Process const& a) const;
   bool operator != (Process const& a) const;
 
+  void ResetCpuUtilization();
+
  private:
    int pid_ = 0;
+   long up_time_ = 0;
    std::string user_;
    std::string cmd_;
    std::string ram_;
