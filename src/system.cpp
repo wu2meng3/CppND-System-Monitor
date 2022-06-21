@@ -39,6 +39,10 @@ vector<Process>& System::Processes()
         }
         processes_.push_back(proc);
     }
+    // Update cpu utilization
+    for (auto& proc : processes_) {
+        proc.ResetCpuUtilization();
+    }
     ReorderProcesses();
     return processes_;
 }

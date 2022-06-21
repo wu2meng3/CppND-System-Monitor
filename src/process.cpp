@@ -24,7 +24,7 @@ int Process::Pid() const
 }
 
 // Return this process's CPU utilization
-float Process::CpuUtilization()
+void Process::ResetCpuUtilization()
 {
     long process_jiffies_so_far =  LinuxParser::ActiveJiffies(this->pid_);
     long total_jiffies_so_far = LinuxParser::Jiffies();
@@ -35,8 +35,6 @@ float Process::CpuUtilization()
     prev_process_jiffies_so_far_ = process_jiffies_so_far;
     prev_total_jiffies_so_far_ = total_jiffies_so_far;
     cpu_utilization_ = (float) process_jiffies_now / (float) total_jiffies_now;
-
-    return cpu_utilization_;
 }
 
 // Return the command that generated this process
@@ -63,12 +61,15 @@ long int Process::UpTime()
     return LinuxParser::UpTime(this->pid_);
 }
 
-float Process::GetCpuUtilization() const {return cpu_utilization_;}
+float Process::CpuUtilization() const 
+{
+    return cpu_utilization_;
+}
 
 // Overload the "less than" comparison operator for Process objects
 bool Process::operator < (Process const& a) const 
 {
-    //return cpu_utilization_ < a.GetCpuUtilization();
+    // return cpu_utilization_ < a.GetCpuUtilization();
     return pid_ < a.Pid();
 }
 
