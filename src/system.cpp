@@ -30,13 +30,13 @@ Processor& System::Cpu()
 // Refresh processes_ at each call
 vector<Process>& System::Processes() 
 { 
-    processes_.clear();
     auto pids = LinuxParser::Pids();
     for (const auto& pid : pids) {
         Process proc(pid);
-        // if (std::find(processes_.begin(), processes_.end(), proc) != processes_.end()) {
-        //     processes_.push_back(std::move(proc));
-        // }
+        // If the process already exists, skip it.
+        if (std::find(processes_.begin(), processes_.end(), proc) != processes_.end()) {
+            continue;
+        }
         processes_.push_back(proc);
     }
     ReorderProcesses();
