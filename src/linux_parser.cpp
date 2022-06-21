@@ -206,30 +206,6 @@ int LinuxParser::RunningProcesses()
   return std::stoi(get_val(kProcDirectory + kStatFilename, "procs_running"));
 }
 
-// Read and return the number of jiffies for the system
-// Used to calculate Cpu utilization of each process
-// Read /proc/stat
-// total_jiffies = user + system
-long LinuxParser::Jiffies() 
-{ 
-  long user = 0, nice = 0, system = 0, idle = 0;
-  long iowait = 0, irq = 0, softirq = 0, steal = 0;
-  long guest = 0, guestnice = 0;
-  
-  string line;
-  string dummy_str;
-  string filename = kProcDirectory + kStatFilename;
-  std::ifstream stream(filename);
-  if (stream.is_open()) {
-    std::getline(stream, line);
-    std::istringstream linestream(line);
-    linestream >> dummy_str >> user >> nice >> system >> idle >> iowait >> irq >> softirq >> steal >> guest >> guestnice;
-    return user + system;
-  } else {
-    throw std::runtime_error("Cannot access file : " + filename);
-  }
-}
-
 // Read and return the number of active jiffies for a PID
 // Used to calculate Cpu utilization of each process
 // Read /proc/[PID]/stat
