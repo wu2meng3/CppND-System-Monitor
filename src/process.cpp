@@ -67,7 +67,8 @@ float Process::GetCpuUtilization() const {return cpu_utilization_;}
 // Overload the "less than" comparison operator for Process objects
 bool Process::operator < (Process const& a) const 
 {
-    return cpu_utilization_ < a.GetCpuUtilization();
+    //return cpu_utilization_ < a.GetCpuUtilization();
+    return pid_ < a.Pid();
 }
 
 bool Process::operator == (Process const& a) const

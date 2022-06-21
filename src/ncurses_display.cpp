@@ -108,8 +108,6 @@ void NCursesDisplay::Display(System& system, int n) {
     wrefresh(system_window);
     wrefresh(process_window);
     refresh();
-    // Reorder processes according to CPU utilization
-    system.ReorderProcesses();
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
   endwin();

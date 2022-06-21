@@ -19,13 +19,14 @@ using std::vector;
 
 You need to properly format the uptime. Refer to the comments mentioned in format. cpp for formatting the uptime.*/
 
-// TODO: Return the system's CPU
+// Return the system's CPU
 Processor& System::Cpu() 
 { 
     return cpu_;
 }
 
-// TODO: Return a container composed of the system's processes
+// Return a container composed of the system's processes
+// Refresh processes_ at each call
 vector<Process>& System::Processes() 
 { 
     processes_.clear();
@@ -33,6 +34,7 @@ vector<Process>& System::Processes()
     for (const auto& pid : pids) {
         processes_.emplace_back(pid, LinuxParser::User(pid), LinuxParser::Command(pid));
     }
+    ReorderProcesses();
     return processes_;
 }
 
@@ -76,5 +78,4 @@ long int System::UpTime()
 void System::ReorderProcesses()
 {
     std::sort(processes_.rbegin(), processes_.rend());
-    return;
 }
