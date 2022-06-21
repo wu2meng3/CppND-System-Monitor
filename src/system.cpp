@@ -28,6 +28,7 @@ Processor& System::Cpu()
 // TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() 
 { 
+    processes_.clear();
     auto pids = LinuxParser::Pids();
     for (const auto& pid : pids) {
         processes_.emplace_back(pid, LinuxParser::User(pid), LinuxParser::Command(pid));
