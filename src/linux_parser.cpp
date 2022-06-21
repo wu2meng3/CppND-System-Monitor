@@ -194,12 +194,6 @@ long LinuxParser::IdleJiffies()
   }
 }
 
-// // TODO: Read and return CPU utilization
-// vector<string> LinuxParser::CpuUtilization() 
-// { 
-//   return {};
-// }
-
 // Read and return the total number of processes
 int LinuxParser::TotalProcesses() 
 { 
@@ -261,7 +255,6 @@ long LinuxParser::ActiveJiffies(int pid)
 }
 
 // Read and return the command associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Command(int pid) 
 { 
   string line;
