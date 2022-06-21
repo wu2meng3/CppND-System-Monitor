@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <memory>
 
 #include "process.h"
 #include "processor.h"
@@ -32,7 +33,11 @@ vector<Process>& System::Processes()
     processes_.clear();
     auto pids = LinuxParser::Pids();
     for (const auto& pid : pids) {
-        processes_.emplace_back(pid, LinuxParser::User(pid), LinuxParser::Command(pid), LinuxParser::Ram(pid));
+        Process proc(pid);
+        // if (std::find(processes_.begin(), processes_.end(), proc) != processes_.end()) {
+        //     processes_.push_back(std::move(proc));
+        // }
+        processes_.push_back(proc);
     }
     ReorderProcesses();
     return processes_;

@@ -11,8 +11,8 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-Process::Process(int pid_in, const string& user_in, const string& cmd_in, const std::string& ram_in)
-: pid_(pid_in), user_(user_in), cmd_(cmd_in), ram_(ram_in)
+Process::Process(int pid_in)
+: pid_(pid_in), user_(LinuxParser::User(pid_in)), cmd_(LinuxParser::Command(pid_in)), ram_(LinuxParser::Ram(pid_in))
 {
 }
 
