@@ -19,6 +19,8 @@ class Process {
   std::string Ram();
   long int UpTime();
   bool operator < (Process const& a) const;
+  bool operator == (Process const& a) const;
+  bool operator != (Process const& a) const;
 
  private:
    int pid_ = 0;

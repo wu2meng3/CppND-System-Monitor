@@ -69,3 +69,13 @@ bool Process::operator < (Process const& a) const
 {
     return cpu_utilization_ < a.GetCpuUtilization();
 }
+
+bool Process::operator == (Process const& a) const
+{
+    return pid_ == a.Pid();
+}
+
+bool Process::operator != (Process const& a) const
+{
+    return !operator==(a);
+}

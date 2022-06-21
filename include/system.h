@@ -19,7 +19,6 @@ class System {
   std::string OperatingSystem();
   void ReorderProcesses(); // Reorder processes according to cpu_utilization;
 
-  // TODO: Define any necessary private members
  private:
   Processor cpu_ = {};
   std::vector<Process> processes_ = {};
