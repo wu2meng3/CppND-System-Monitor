@@ -11,10 +11,11 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-Process::Process(int pid_in, const string& user_in, const string& cmd_in)
-: pid_(pid_in), user_(user_in), cmd_(cmd_in)
+Process::Process(int pid_in, const string& user_in, const string& cmd_in, const std::string& ram_in)
+: pid_(pid_in), user_(user_in), cmd_(cmd_in), ram_(ram_in)
 {
 }
+
 
 // Return this process's ID
 int Process::Pid() const
@@ -47,7 +48,7 @@ string Process::Command() const
 // Return this process's memory utilization
 string Process::Ram()
 { 
-    return LinuxParser::Ram(this->pid_);
+    return ram_;
 }
 
 // Return the user (name) that generated this process

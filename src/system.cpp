@@ -32,7 +32,7 @@ vector<Process>& System::Processes()
     processes_.clear();
     auto pids = LinuxParser::Pids();
     for (const auto& pid : pids) {
-        processes_.emplace_back(pid, LinuxParser::User(pid), LinuxParser::Command(pid));
+        processes_.emplace_back(pid, LinuxParser::User(pid), LinuxParser::Command(pid), LinuxParser::Ram(pid));
     }
     ReorderProcesses();
     return processes_;
