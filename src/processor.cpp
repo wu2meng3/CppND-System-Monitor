@@ -2,6 +2,8 @@
 #include "linux_parser.h"
 
 // Return the aggregate CPU utilization
+// according to
+// https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
 float Processor::Utilization() 
 { 
     long idle_so_far = LinuxParser::IdleJiffies();
