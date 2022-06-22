@@ -28,7 +28,7 @@ string get_val(const string& filename, const string& key_str_target) {
       
       if (key_str == key_str_target) return val_str;
     }
-    throw std::runtime_error("Cannot find key_str : " + key_str + " in file : " + filename);
+    throw std::runtime_error("Cannot find key_str : " + key_str_target + " in file : " + filename);
   } else {
     // cannot find key_str
     throw std::runtime_error("Cannot access file : " + filename);
@@ -47,7 +47,7 @@ std::tuple<string, string> get_val_with_unit(const string& filename, const strin
       
       if (key_str == key_str_target) return std::make_tuple(val_str, unit_str);
     }
-    throw std::runtime_error("Cannot find key_str : " + key_str + " in file : " + filename);
+    throw std::runtime_error("Cannot find key_str : " + key_str_target + " in file : " + filename);
   }
   return {};
 }
