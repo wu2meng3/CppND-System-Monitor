@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
+#include <experimental/filesystem>
 
 #include "process.h"
 #include "processor.h"
@@ -16,6 +17,8 @@ using std::set;
 using std::size_t;
 using std::string;
 using std::vector;
+using namespace LinuxParser;
+namespace fs = std::experimental::filesystem;
 
 // Return the system's CPU
 Processor& System::Cpu() 
@@ -28,19 +31,34 @@ Processor& System::Cpu()
 vector<Process>& System::Processes() 
 { 
     auto pids = LinuxParser::Pids();
+    // Add processes to processes_ vector
     for (const auto& pid : pids) {
         Process proc(pid);
-        // If the process already exists, skip it.
-        if (std::find(processes_.begin(), processes_.end(), proc) != processes_.end()) {
+        // Skip existing processes
+        if (std::find(processes_.begin(), processes_.end(), proc) != processes_.end())
             continue;
-        }
+
         processes_.push_back(proc);
     }
+
+    // Trim processes without corresponding PID folder (/proc/PID)
+    processes_.erase(std::remove_if(
+                    processes_.begin(), 
+                    processes_.end(),
+                    [](Process& proc)
+                    {
+                        fs::path pid_folder_path{kProcDirectory+std::to_string(proc.Pid())};
+                        return !fs::exists(pid_folder_path);
+                    }));
+    
     // Update cpu utilization
     for (auto& proc : processes_) {
         proc.ResetCpuUtilization();
     }
+
+    // Reorder processes according to cpu utilization
     ReorderProcesses();
+
     return processes_;
 }
 
