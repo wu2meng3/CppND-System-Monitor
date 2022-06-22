@@ -28,10 +28,10 @@ string get_val(const string& filename, const string& key_str_target) {
       
       if (key_str == key_str_target) return val_str;
     }
-    throw std::runtime_error("Cannot find key_str : " + key_str_target + " in file : " + filename);
+    // throw std::runtime_error("Cannot find key_str : " + key_str_target + " in file : " + filename);
   } else {
     // cannot find key_str
-    throw std::runtime_error("Cannot access file : " + filename);
+    throw std::runtime_error("get_val: Cannot access file : " + filename);
   }
   return {};
 }
@@ -47,9 +47,9 @@ std::tuple<string, string> get_val_with_unit(const string& filename, const strin
       
       if (key_str == key_str_target) return std::make_tuple(val_str, unit_str);
     }
-    throw std::runtime_error("Cannot find key_str : " + key_str_target + " in file : " + filename);
+    //throw std::runtime_error("Cannot find key_str : " + key_str_target + " in file : " + filename);
   }
-  return {};
+  return std::make_tuple<string, string>("","");
 }
 
 // Get the n-th (starting from 1) field of the first line of the file
@@ -65,7 +65,7 @@ string get_field(const string& filename, const int& index) {
     return temp_str;
   } else {
     // cannot find key_str
-    throw std::runtime_error("Cannot access file : " + filename);
+    throw std::runtime_error("get_field: Cannot access file : " + filename);
   }
   return {};
 }
@@ -105,7 +105,7 @@ string LinuxParser::Kernel() {
     linestream >> os >> version >> kernel;
     return kernel;
   } else {
-    throw std::runtime_error("Cannot access file : " + filename);
+    throw std::runtime_error("Kernel: Cannot access file : " + filename);
   }
 }
 
@@ -146,7 +146,7 @@ long LinuxParser::UpTime()
     linestream >> up_time;
     return up_time;
   } else {
-    throw std::runtime_error("Cannot access file : " + filename);
+    throw std::runtime_error("UpTime: Cannot access file : " + filename);
   }
 }
 
@@ -168,7 +168,7 @@ long LinuxParser::ActiveJiffies()
     linestream >> dummy_str >> user >> nice >> system >> idle >> iowait >> irq >> softirq >> steal >> guest >> guestnice;
     return user + nice + system + irq + softirq + steal;
   } else {
-    throw std::runtime_error("Cannot access file : " + filename);
+    throw std::runtime_error("ActiveJiffies: Cannot access file : " + filename);
   }
 }
 
@@ -190,7 +190,7 @@ long LinuxParser::IdleJiffies()
     linestream >> dummy_str >> user >> nice >> system >> idle >> iowait >> irq >> softirq >> steal >> guest >> guestnice;
     return idle + iowait;
   } else {
-    throw std::runtime_error("Cannot access file : " + filename);
+    throw std::runtime_error("IdleJiffies: Cannot access file : " + filename);
   }
 }
 
@@ -226,7 +226,7 @@ long LinuxParser::ActiveJiffies(int pid)
     linestream >> user >> system >> user_waited_for_children >> system_waited_for_children;
     return user + system + user_waited_for_children + system_waited_for_children;
   } else {
-    throw std::runtime_error("Cannot access file : " + filename);
+    throw std::runtime_error("ActiveJiffies: Cannot access file : " + filename);
   }
 }
 
@@ -240,7 +240,7 @@ string LinuxParser::Command(int pid)
     std::getline(stream, line);
     return line; 
   } else {
-    throw std::runtime_error("Cannot access file : " + filename);
+    throw std::runtime_error("Command: Cannot access file : " + filename);
   }
 }
 
@@ -281,7 +281,7 @@ string LinuxParser::User(int pid)
       }
     }
   } else {
-    throw std::runtime_error("Cannot access file : " + filename);
+    throw std::runtime_error("User: Cannot access file : " + filename);
   }
   return username;
 }
