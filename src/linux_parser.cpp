@@ -264,11 +264,11 @@ string LinuxParser::Ram(int pid)
 { 
   string filename = kProcDirectory + std::to_string(pid) + kStatusFilename;
   // Unpack a tuple with structured binding (C++17)
-  // auto [val_str, unit_str] = get_val_with_unit(filename, "VmSize:");
+  // auto [val_str, unit_str] = get_val_with_unit(filename, "VmRSS:");
   
   // Unpack a tuple with std::tie (C++14)
   string val_str, unit_str;
-  std::tie(val_str, unit_str) = get_val_with_unit(filename, "VmSize:");
+  std::tie(val_str, unit_str) = get_val_with_unit(filename, "VmRSS:");
 
   if (unit_str != "kB") throw std::runtime_error("wrong unit : " + unit_str);
   return std::to_string(std::stoi(val_str) / 1024);
