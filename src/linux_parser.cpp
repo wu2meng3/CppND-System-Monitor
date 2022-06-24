@@ -6,7 +6,18 @@
 #include <iostream>
 #include <unistd.h>
 #include <tuple>
-#include <experimental/filesystem>
+
+// filesystem library since C++17
+#if __has_include(<filesystem>)
+#  include <filesystem>
+   namespace fs = std::filesystem;
+#else
+// for GNU libstdc++ prior to 9.1
+// and LLVM libc++ prior to 9.0
+// requires target_link_libraries(... stdc++fs) in 13:CMakeLists.txt
+#  include <experimental/filesystem>
+   namespace fs = std::experimental::filesystem;
+#endif
 
 #include "linux_parser.h"
 
@@ -14,8 +25,6 @@ using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
-
-namespace fs = std::experimental::filesystem;
 
 // Given a key, get the corresponding value
 string get_val(const string& filename, const string& key_str_target) {
