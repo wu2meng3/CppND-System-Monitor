@@ -242,12 +242,18 @@ long LinuxParser::ActiveJiffies(int pid)
 // Read and return the command associated with a process
 string LinuxParser::Command(int pid) 
 { 
+  constexpr int MAX_CMD_LENGTH = 50;
   string line;
   string filename = kProcDirectory + std::to_string(pid) + kCmdlineFilename;
   std::ifstream stream(filename);
   if (stream.is_open()) {
     std::getline(stream, line);
-    return line; 
+    // truncate string to 50 characters
+    if (line.size() > MAX_CMD_LENGTH) {
+      line.resize(MAX_CMD_LENGTH);
+      line += "...";
+    }
+    return line;
   } else {
     throw std::runtime_error("Command: Cannot access file : " + filename);
   }
