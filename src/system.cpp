@@ -6,7 +6,17 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
-#include <experimental/filesystem>
+// filesystem library since C++17
+#if __has_include(<filesystem>)
+#  include <filesystem>
+   namespace fs = std::filesystem;
+#else
+// for GNU libstdc++ prior to 9.1
+// and LLVM libc++ prior to 9.0
+// requires target_link_libraries(... stdc++fs) in 13:CMakeLists.txt
+#  include <experimental/filesystem>
+   namespace fs = std::experimental::filesystem;
+#endif
 
 #include "process.h"
 #include "processor.h"
@@ -18,7 +28,6 @@ using std::size_t;
 using std::string;
 using std::vector;
 using namespace LinuxParser;
-namespace fs = std::experimental::filesystem;
 
 // Return the system's CPU
 Processor& System::Cpu() 
