@@ -6,16 +6,19 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
+
 // filesystem library since C++17
 #if __has_include(<filesystem>)
 #  include <filesystem>
    namespace fs = std::filesystem;
-#else
+#elif __has_include(<experimental/filesystem>)
 // for GNU libstdc++ prior to 9.1
 // and LLVM libc++ prior to 9.0
 // requires target_link_libraries(... stdc++fs) in 13:CMakeLists.txt
 #  include <experimental/filesystem>
    namespace fs = std::experimental::filesystem;
+#else
+#  error "Missing the <filesystem> header."
 #endif
 
 #include "process.h"
